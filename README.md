@@ -1,6 +1,8 @@
 # React Native Tooltip Chart
 A react-native-svg-charts implementation with dynamic tappable tooltips.
 
+![alt tag](./assets/tooltip5.gif)
+
 ## Installation
 ### npm modules
 ```npm install```
