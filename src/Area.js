@@ -5,12 +5,16 @@ import moment from 'moment';
 import { Circle } from 'react-native-svg';
 
 import { DATA } from './Data';
+import Tooltip from './Tooltip';
 
 const { height } = Dimensions.get('window');
 
 class Area extends React.PureComponent {
   state = {
     data: [],
+    tooltipX: null,
+    tooltipY: null,
+    tooltipIndex: null,
   };
 
   componentDidMount() {
@@ -21,7 +25,7 @@ class Area extends React.PureComponent {
     const reorderedData = DATA.sort((a, b) => {
       // Turn your strings into dates, and then subtract them
       // to get a value that is either negative, positive, or zero.
-      return new Date(b.date) - new Date(a.date);
+      return new Date(a.date) - new Date(b.date);
     });
 
     this.setState({
@@ -30,7 +34,7 @@ class Area extends React.PureComponent {
   };
 
   render() {
-    const { data } = this.state;
+    const { data, tooltipX, tooltipY, tooltipIndex } = this.state;
     const contentInset = { left: 10, right: 10, top: 10, bottom: 7 };
 
     const ChartPoints = ({ x, y, color }) =>
@@ -42,6 +46,13 @@ class Area extends React.PureComponent {
           r={6}
           stroke={color}
           fill="white"
+          onPress={() =>
+            this.setState({
+              tooltipX: moment(item.date),
+              tooltipY: item.score,
+              tooltipIndex: index,
+            })
+          }
         />
       ));
 
@@ -50,7 +61,7 @@ class Area extends React.PureComponent {
         <View style={styles.container}>
           {data.length !== 0 ? (
             <AreaChart
-              style={{ height: '50%' }}
+              style={{ height: '70%' }}
               data={data}
               yAccessor={({ item }) => item.score}
               xAccessor={({ item }) => moment(item.date)}
@@ -62,6 +73,13 @@ class Area extends React.PureComponent {
             >
               <Grid svg={{ stroke: 'rgba(151, 151, 151, 0.09)' }} belowChart={false} />
               <ChartPoints color="#003F5A" />
+              <Tooltip
+                tooltipX={tooltipX}
+                tooltipY={tooltipY}
+                color="#003F5A"
+                index={tooltipIndex}
+                dataLength={data.length}
+              />
             </AreaChart>
           ) : (
             <View
